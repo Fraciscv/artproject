@@ -6,8 +6,153 @@ const goHome = document.querySelector('#home-btn')
 const goToUserPage = document.querySelector('#user-btn')
 const goToUsers = document.querySelector('#users-btn')
 const githubButton = document.querySelector('#github-btn')
+const navBar = document.querySelector(`#userProfile`)
+const topBar = document.querySelector('#top-nav-bar')
+console.log(topBar)
+
+const formtoHtml = () => {
+    mainPage.innerHTML = ""
+    let loadForm = document.createElement('form')
+    let Div1 = document.createElement('div')
+    Div1.className = "uk-margin"
+    let Div2 = document.createElement('div')
+    Div2.className = "uk-inline"
+    Div2.innerHTML = `<span class="uk-form-icon" uk-icon="icon: user"></span>
+    <input class="uk-input" type="text">`
+        
+        loadForm.append(Div1, Div2)
+        mainPage.append(loadForm)
+    
+    loadForm.addEventListener('submit', (evt) =>{
+        evt.preventDefault()
+        let username = evt.target[0].value
+    fetch("http://localhost:3000/authors/login", {
+        method: "POST",
+        headers: {
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            usernameFromFrontEnd: username
+        })
+    })
+        .then(res => res.json())
+        .then(response => {
+            console.log(response)
+            if(response.id){
+                showUserInformation(response)
+
+            } else {
+                console.log(response)
+            }
+
+        })
+
+    })
+    
+}
+// ------------ WHAT TO DO WITH TEACHER RESPONSE ------------
+let showUserInformation = (author) => {
+    showAuthorHomepage(author)
+    
+}
+// ------------ SET SIDE BAR AFTER LOGIN ------------
+
+
+let showAuthorHomepage = (author) => {
+    mainPage.innerHTML = ""
+    topBar.innerHTML = ""
+    let displayUsername = document.createElement('div')
+        displayUsername.innerHTML = `<div id="top-nav-bar" uk-sticky><div>
+        <ul class="uk-flex-right" uk-tab>
+            <li id="sign-in-btn"><a href="#">Welcome ${author.username}</a></li>
+        </ul>
+    </div></div>`
+    
+        topBar.append(displayUsername)
+        
+}
+    
+// #TODO render tags on homepage  use this cool filter form YIKES good luck also change the buttons on the left.
+let renderTagsonMainPage = (author) => {
+`<div uk-filter="target: .js-filter">
+
+<ul class="uk-subnav uk-subnav-pill">
+    <li uk-filter-control=".tag-acrylic"><a href="#">White</a></li>
+    <li uk-filter-control=".tag-oil"><a href="#">Blue</a></li>
+    <li uk-filter-control=".tag-photography"><a href="#">Black</a></li>
+    <li uk-filter-control=".tag-poetry"><a href="#">White</a></li>
+    <li uk-filter-control=".tag-music"><a href="#">Blue</a></li>
+    <li uk-filter-control=".tag-drawings"><a href="#">Black</a></li>
+</ul>
+
+<ul class="js-filter uk-child-width-1-2 uk-child-width-1-3@m uk-text-center" uk-grid>
+    <li class="tag-white">
+        <div class="uk-card uk-card-default uk-card-body">Item</div>
+    </li>
+    <li class="tag-blue">
+        <div class="uk-card uk-card-primary uk-card-body">Item</div>
+    </li>
+    <li class="tag-white">
+        <div class="uk-card uk-card-default uk-card-body">Item</div>
+    </li>
+    <li class="tag-white">
+        <div class="uk-card uk-card-default uk-card-body">Item</div>
+    </li>
+    <li class="tag-black">
+        <div class="uk-card uk-card-secondary uk-card-body">Item</div>
+    </li>
+    <li class="tag-black">
+        <div class="uk-card uk-card-secondary uk-card-body">Item</div>
+    </li>
+    <li class="tag-blue">
+        <div class="uk-card uk-card-primary uk-card-body">Item</div>
+    </li>
+    <li class="tag-black">
+        <div class="uk-card uk-card-secondary uk-card-body">Item</div>
+    </li>
+    <li class="tag-blue">
+        <div class="uk-card uk-card-primary uk-card-body">Item</div>
+    </li>
+    <li class="tag-white">
+        <div class="uk-card uk-card-default uk-card-body">Item</div>
+    </li>
+    <li class="tag-blue">
+        <div class="uk-card uk-card-primary uk-card-body">Item</div>
+    </li>
+    <li class="tag-black">
+        <div class="uk-card uk-card-secondary uk-card-body">Item</div>
+    </li>
+</ul>
+
+</div>`
+}
+
+
+
+//Sign in Button
 signInBtn.addEventListener('click', (evt) =>{
+    formtoHtml()
+
+});
+//sign up Button
+signUpBtn.addEventListener('click', (evt) =>{
     console.log(evt.target)
+});
+//home Button
+goHome.addEventListener('click', (evt) =>{
+    console.log(evt.target)
+});
+//profile Button
+goToUserPage.addEventListener('click', (evt) =>{
+    console.log(evt.target)
+});
+//all users Button
+goToUsers.addEventListener('click', (evt) =>{
+    console.log(evt.target)
+});
+//github repo Button
+githubButton.addEventListener('click', (evt) =>{
+    document.location.href = 'https://github.com/Fraciscv/artproject';
 });
 
 
@@ -38,7 +183,7 @@ function populateTagsOnPage(tags) {
             });
             
 }}
-showTags()
+
 //TODO showTags()  is a helper function that populates when a user logs in. or clicks on another users profile
 //         populateTagsOnPage.addEventListener("click", populatePosts)
 //     }
