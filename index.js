@@ -10,8 +10,11 @@ const navBar = document.querySelector(`#userProfile`)
 const topBar = document.querySelector('#top-nav-bar')
 console.log(topBar)
 
-const formtoHtml = () => {
+
+const formToSignUp = () => {
     mainPage.innerHTML = ""
+    let pTag = document.createElement('p')
+    pTag.innerText = "Become a content creator"
     let loadForm = document.createElement('form')
     let Div1 = document.createElement('div')
     Div1.className = "uk-margin"
@@ -21,6 +24,51 @@ const formtoHtml = () => {
     <input class="uk-input" type="text">`
         
         loadForm.append(Div1, Div2)
+        mainPage.append(loadForm, pTag)
+    
+    loadForm.addEventListener('submit', (evt) =>{
+        evt.preventDefault()
+        let username = evt.target[0].value
+        console.log(username)
+    fetch("http://localhost:3000/authors/signup", {
+        method: "POST",
+        headers: {
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            usernameFromFrontEnd: username
+        })
+    })
+        .then(res => res.json())
+        .then(response => {
+            console.log(response)
+            if(response.id){
+                showUserInformation(response)
+
+            } else {
+                console.log(response)
+            }
+
+        })
+
+    })
+    
+
+}
+
+const formtoHtml = () => {
+    mainPage.innerHTML = ""
+    let pTag = document.createElement('p')
+    pTag.innerText = "Welcome back, passwords coming soon"
+    let loadForm = document.createElement('form')
+    let Div1 = document.createElement('div')
+    Div1.className = "uk-margin"
+    let Div2 = document.createElement('div')
+    Div2.className = "uk-inline"
+    Div2.innerHTML = `<span class="uk-form-icon" uk-icon="icon: user"></span>
+    <input class="uk-input" type="text">`
+        
+        loadForm.append(Div1, Div2, pTag)
         mainPage.append(loadForm)
     
     loadForm.addEventListener('submit', (evt) =>{
@@ -53,7 +101,7 @@ const formtoHtml = () => {
 // ------------ WHAT TO DO WITH TEACHER RESPONSE ------------
 let showUserInformation = (author) => {
     showAuthorHomepage(author)
-    
+    renderTagsonMainPage(author)
 }
 // ------------ SET SIDE BAR AFTER LOGIN ------------
 
@@ -72,59 +120,24 @@ let showAuthorHomepage = (author) => {
         
 }
     
-// #TODO render tags on homepage  use this cool filter form YIKES good luck also change the buttons on the left.
+// #TODO render tags on homepage
 let renderTagsonMainPage = (author) => {
-`<div uk-filter="target: .js-filter">
+    let showTags = document.createElement('p')
+    showTags.innerHTML = `<div uk-filter="target: .js-filter">
 
 <ul class="uk-subnav uk-subnav-pill">
-    <li uk-filter-control=".tag-acrylic"><a href="#">White</a></li>
-    <li uk-filter-control=".tag-oil"><a href="#">Blue</a></li>
-    <li uk-filter-control=".tag-photography"><a href="#">Black</a></li>
-    <li uk-filter-control=".tag-poetry"><a href="#">White</a></li>
-    <li uk-filter-control=".tag-music"><a href="#">Blue</a></li>
-    <li uk-filter-control=".tag-drawings"><a href="#">Black</a></li>
-</ul>
+    <li uk-filter-control=".tag-acry"><a href="#">acrylic</a></li>
+    <li uk-filter-control=".tag-photo"><a href="#">photography</a></li>
+    <li uk-filter-control=".tag-draw"><a href="#">drawing</a></li>
+    <li uk-filter-control=".tag-poet"><a href="#">poetry</a></li>
+    <li uk-filter-control=".tag-music"><a href="#">music</a></li>
+    <li uk-filter-control=".tag-oil"><a href="#">oil painting</a></li>
+</ul>`
 
-<ul class="js-filter uk-child-width-1-2 uk-child-width-1-3@m uk-text-center" uk-grid>
-    <li class="tag-white">
-        <div class="uk-card uk-card-default uk-card-body">Item</div>
-    </li>
-    <li class="tag-blue">
-        <div class="uk-card uk-card-primary uk-card-body">Item</div>
-    </li>
-    <li class="tag-white">
-        <div class="uk-card uk-card-default uk-card-body">Item</div>
-    </li>
-    <li class="tag-white">
-        <div class="uk-card uk-card-default uk-card-body">Item</div>
-    </li>
-    <li class="tag-black">
-        <div class="uk-card uk-card-secondary uk-card-body">Item</div>
-    </li>
-    <li class="tag-black">
-        <div class="uk-card uk-card-secondary uk-card-body">Item</div>
-    </li>
-    <li class="tag-blue">
-        <div class="uk-card uk-card-primary uk-card-body">Item</div>
-    </li>
-    <li class="tag-black">
-        <div class="uk-card uk-card-secondary uk-card-body">Item</div>
-    </li>
-    <li class="tag-blue">
-        <div class="uk-card uk-card-primary uk-card-body">Item</div>
-    </li>
-    <li class="tag-white">
-        <div class="uk-card uk-card-default uk-card-body">Item</div>
-    </li>
-    <li class="tag-blue">
-        <div class="uk-card uk-card-primary uk-card-body">Item</div>
-    </li>
-    <li class="tag-black">
-        <div class="uk-card uk-card-secondary uk-card-body">Item</div>
-    </li>
-</ul>
 
-</div>`
+
+
+mainPage.append(showTags)
 }
 
 
@@ -136,7 +149,7 @@ signInBtn.addEventListener('click', (evt) =>{
 });
 //sign up Button
 signUpBtn.addEventListener('click', (evt) =>{
-    console.log(evt.target)
+    formToSignUp()
 });
 //home Button
 goHome.addEventListener('click', (evt) =>{
