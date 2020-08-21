@@ -28,9 +28,8 @@ const formToSignUp = () => {
     mainPage.append(loadForm, pTag)
 
     loadForm.addEventListener('submit', (evt) => {
-        evt.preventDefault()
+    evt.preventDefault()
         let username = evt.target[0].value
-        console.log(username)
         fetch("http://localhost:3000/authors/signup", {
             method: "POST",
             headers: {
@@ -49,10 +48,8 @@ const formToSignUp = () => {
                 } else {
                     console.log(response)
                 }
-
             })
     })
-
 }
 
 //Form if you are a returning user
@@ -102,11 +99,14 @@ const formtoHtml = () => {
 let showUserInformation = (author) => {
     showAuthorHomepage(author)
     renderTagsonMainPage(author)
-
 }
+///---------------GATHER DATA for PATCH REQUEST-------------
+function gatherFormData(){
+    return 
+}  
+
+
 // ------------ SET SIDE BAR AFTER LOGIN ------------
-
-
 let showAuthorHomepage = (author) => {
     mainPage.innerHTML = ""
     topBar.innerHTML = ""
@@ -115,7 +115,6 @@ let showAuthorHomepage = (author) => {
     listenToButton.addEventListener('click', (evt) => {
         evt.preventDefault()
         console.log(evt.target)
-        //TO DO NEED TO RENDER A FORM TO "POST" to posts in back end, using image_link, title... whatever else you might need.
         let divForForm = document.createElement('dt')
         divForForm.innerHTML = `<form class="form-for-upload">
         <fieldset class="uk-fieldset">
@@ -146,29 +145,32 @@ let showAuthorHomepage = (author) => {
 
         const forForUpload = document.querySelector('.form-for-upload')
         forForUpload.addEventListener('submit', (evt) =>{
+            //debugger 
             evt.preventDefault()
-            console.log(evt)
-            console.log(evt.target)
-            
+            fetch(`http://127.0.0.1:3000/authors/${author.id}`)
+            .then(r => r.json())
+            .then(patchObj => console.log(patchObj))
+            /////////////////TODO////////////////////////
         })
     })
-//displays username on top of page and gets rid of sign in or sign up
+//------------------displays username on top of page and gets rid of sign in or sign up----------
 let displayUsername = document.createElement('div')
     displayUsername.innerHTML = `<div id="top-nav-bar" uk-sticky><div>
         <ul class="uk-flex-right" uk-tab>
-            <li id="sign-in-btn"><a href="#">Welcome ${author.username}</a></li>
+        <li id="sign-in-btn"><a href="#">Welcome ${author.username}</a></li>
         </ul>
-    </div></div>`
-
+        </div></div>`
+        //appends to navbar
     topBar.append(displayUsername)
 
 }
+//idk what this is doing
 let renderUsersProfileButton = (author) => {
     mainPage.innerHTML = ""
 }
 
-// Renders Tags onto home page for each user
-//TODO :  need to figure out why its not filtering
+//----------------- Renders Tags onto home page for each user-----------------------
+//TODO :  filter not working because of structure
 let renderTagsonMainPage = (author) => {
     let showTags = document.createElement('a')
     showTags.innerHTML = `<div uk-filter="target: .js-filter">
@@ -193,107 +195,110 @@ function displayUnderEachProfile(authObj) {
     let newImgDiv = document.createElement('div')
         newImgDiv.className = "uk-card uk-card-default uk-card-body"
         newImgDiv.innerHTML = `<img src=${authObj.image_url}>`
-
+        //structure is all jacked up
         newLi.append(newImgDiv)
         thisBelongsHere.append(newLi)
 }
-
-
         let thisBelongsHere = document.createElement('ul')
             thisBelongsHere.innerHTML = `<ul class="js-filter uk-child-width-1-2 uk-child-width-1-3@m uk-text-center" uk-grid></ul>`
-
+        // one day you will fix this
         showTags.append(thisBelongsHere)
         mainPage.append(showTags)
 
-
-
-    //all users Button
+        //------------all users Button------------------
 goToUsers.addEventListener('click', (evt) => {
     evt.preventDefault()
-    mainPage.innerHTML = ""
-    let title = document.createElement('h3')
-    title.innerText = "Artist Info"
-    let h3Tag = document.createElement('p')    
-    fetch(`http://127.0.0.1:3000/authors`)
-    .then(response => response.json())
-    .then(authorObj => authorObj.map(displayEachUser).sample)
-    
-    function displayEachUser(authObj) {
-        debugger
-    let displayUsersHTML = document.createElement('li')
-    displayUsersHTML.innerHTML = `<dl class="uk-description-list uk-description-list-divider">
-    <dt><strong>@${authObj.username}</strong></dt>
-    <dd>Bio:${authObj.bio} </dd>
-    <dt>Latest Posts:</dt>
-    <dd>image a list of images here.</dd>
-    <p>
-</dl>`
+        mainPage.innerHTML = ""
+        let title = document.createElement('h3')
+            title.innerText = "Artist Info"
+        let h3Tag = document.createElement('p')    
+        fetch(`http://127.0.0.1:3000/authors`)
+        .then(response => response.json())
+        .then(authorObj => authorObj.map(displayEachUser).sample)
+        
+            function displayEachUser(authObj) {
+            debugger
+            let displayUsersHTML = document.createElement('li')
+                displayUsersHTML.innerHTML = `<dl class="uk-description-list uk-description-list-divider">
+                <dt><strong>@${authObj.username}</strong></dt>
+                <dd>Bio:${authObj.bio} </dd>
+                <dt>Latest Posts:</dt>
+                <dd>image a list of images here.</dd>
+                <p>
+                </dl>`
 
-    h3Tag.append(displayUsersHTML)
-        }    
-    mainPage.append(title, h3Tag)
-    
+            h3Tag.append(displayUsersHTML)
+            }    
+            mainPage.append(title, h3Tag)
 });
 
-    //profile Button
-    const currentdate = new Date(); 
-    const datetime = "Today is: " + currentdate.getDate() + "/"
-                    + (currentdate.getMonth()+1)  + "/" 
-                    + currentdate.getFullYear() + " @ "  
-                    + currentdate.getHours() + ":"  
-                    + currentdate.getMinutes() + ":" 
-                    + currentdate.getSeconds();
+//------------------profile Button-----------------------------------
+    //helper to display time.now
+const currentdate = new Date(); 
+const datetime = "Today is: " + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+//display profile edit tab
+goToUserPage.innerHTML = `<li><a class="nav-link" id="user-btn" href="#" uk-icon="icon: user"></a></li>
+                            <div uk-dropdown>
+                                <ul class="uk-nav uk-dropdown-nav">
+                                    <li class="uk-active"><a href="#">Hello ${author.username}</a></li>
+                                    <li><a href="#">${datetime}</a></li>
+                                    <li class="uk-nav-header">Edit Profile</li>
+                                    <li><a id="bio" href="#">Bio</a></li>
+                                    <li><a id="ava" href="#">Avatar</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li><a id="delete" href="#">delete account</a></li>
+                                </ul>
+                            </div>`
+                            //TODO EVENT LISTENERS FOR BUTTONS TO EDIT PROFILE
+                            let editBio = document.querySelector('#bio')
+                            let editAvatar = document.querySelector('#ava')
+                            let deleteProfile = document.querySelector('#delete')
 
-    goToUserPage.innerHTML = `<li><a class="nav-link" id="user-btn" href="#" uk-icon="icon: user"></a></li>
-    <div uk-dropdown>
-        <ul class="uk-nav uk-dropdown-nav">
-            <li class="uk-active"><a href="#">Hello ${author.username}</a></li>
-            <li><a href="#">${datetime}</a></li>
-            <li class="uk-nav-header">Edit Profile</li>
-            <li><a href="#">Bio</a></li>
-            <li><a href="#">Avatar</a></li>
-            <li class="uk-nav-divider"></li>
-            <li><a href="#">delete account</a></li>
-        </ul>
-    </div>`
-//home Button renders user info
+//-------------------home Button renders user info-----------------thank you scope
 goHome.addEventListener('click', (evt) => {
     evt.preventDefault()
-    debugger
     showUserInformation(author)
-
 });
 
-}
+}///this funtion started at 174 nice job
 
-
-
-
-
+//------------------sign in button----------------------
 signInBtn.addEventListener('click', (evt) => {
     formtoHtml()
-
 });
 
-//sign up Button
+//------------------sign up Button----------------------
 signUpBtn.addEventListener('click', (evt) => {
     formToSignUp()
 });
 
-
-
-//github repo Button
+//----------------github repo Button--------------------
 githubButton.addEventListener('click', (evt) => {
     document.location.href = 'https://github.com/Fraciscv/artproject';
 });
 
 
+
+
+
+
+
+
+
+
+
+
+//experimental zone------ AKA DANGER ZONE---------- STAY AWAY!!!!!
 function showTags() {
     fetch(`http://127.0.0.1:3000/tags`)
         .then(r => r.json())
         .then(tags => {
             tags.forEach(populateTagsOnPage)
-
         })
 
     function populateTagsOnPage(tags) {
@@ -316,7 +321,6 @@ function showTags() {
 
     }
 }
-
 //TODO showTags()  is a helper function that populates when a user logs in. or clicks on another users profile
 //         populateTagsOnPage.addEventListener("click", populatePosts)
 //     }
